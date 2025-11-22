@@ -1,0 +1,13 @@
+# MinIO / S3 settings
+MINIO_ENDPOINT=minio
+MINIO_PORT=9000
+MINIO_ACCESS_KEY=admin
+MINIO_SECRET_KEY=admin123
+MINIO_BUCKET=uploads
+
+# Kafka settings
+KAFKA_BROKER=kafka:9092
+KAFKA_TOPIC=files.uploaded
+
+# NestJS server port (optional)
+PORT=3000
