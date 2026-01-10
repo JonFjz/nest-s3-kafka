@@ -45,7 +45,7 @@ jobs:
 
       - name: Import Docker Image
         run: |
-           docker save nest-23:latest | sudo ctr -n k8s.io images import -
+           docker save nest-s3:latest | sudo ctr -n k8s.io images import -
 
       - name: Apply Kubernetes manifests
         run: |
