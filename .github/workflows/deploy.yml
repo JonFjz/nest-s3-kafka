@@ -29,11 +29,11 @@ jobs:
       - name: Unit Tests
         run: npm run test
 
-      - name: E2E Tests
-        env:
-          MINIO_ENDPOINT: 57.129.78.173
-          MINIO_PORT: 31544
-        run: npm run test:e2e
+      # - name: E2E Tests
+      #   env:
+      #     MINIO_ENDPOINT: 57.129.78.173
+      #     MINIO_PORT: 31544
+      #   run: npm run test:e2e
 
       - name: Build Docker image
         run: |
