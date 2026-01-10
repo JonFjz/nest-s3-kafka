@@ -22,7 +22,20 @@ export class KafkaConsumerService implements OnModuleInit {
         if (!message.value) return;
         try {
           const payload = JSON.parse(message.value.toString());
-          console.log('Consumed file event:', payload);
+          console.log(
+            'Consumed file event:',
+            JSON.stringify(
+              {
+                entryId: payload?.entryId,
+                assetId: payload?.assetId,
+                key: payload?.key,
+                originalname: payload?.originalname,
+                uploadedAt: payload?.uploadedAt,
+              },
+              null,
+              2,
+            ),
+          );
           // Extend here: database insert, thumbnail generation, etc.
         } catch (err) {
           console.error('Failed to parse Kafka message', err);

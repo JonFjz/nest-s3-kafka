@@ -3,10 +3,13 @@ import { StorageModule } from './storage/storage.module';
 import { KafkaModule } from './kafka/kafka.module';
 import { FileService } from './file/file.service';
 import { FileController } from './file/file.controller';
+import { AuthModule } from './auth/auth.module';
+import { AssetsController } from './assets/assets.controller';
+import { AssetsService } from './assets/assets.service';
 
 @Module({
-  imports: [StorageModule, KafkaModule],
-  controllers: [FileController],
-  providers: [FileService],
+  imports: [AuthModule, StorageModule, KafkaModule],
+  controllers: [FileController, AssetsController],
+  providers: [FileService, AssetsService],
 })
 export class AppModule {}

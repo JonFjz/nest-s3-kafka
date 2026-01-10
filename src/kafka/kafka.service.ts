@@ -4,6 +4,8 @@ import * as dotenv from 'dotenv';
 dotenv.config();
 
 export interface FileUploadedEvent {
+  entryId: string;
+  assetId: string;
   key: string;
   originalname: string;
   uploadedAt: string;

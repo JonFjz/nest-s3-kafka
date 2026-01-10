@@ -23,10 +23,34 @@ export class StorageService implements OnModuleInit {
     if (!exists) {
       await this.minioClient.makeBucket(bucket, 'us-east-1');
     }
+
+    const policy = {
+      Version: '2012-10-17',
+      Statement: [
+        {
+          Effect: 'Allow',
+          Principal: { AWS: ['*'] },
+          Action: ['s3:GetObject'],
+          Resource: [`arn:aws:s3:::${bucket}/*`],
+        },
+      ],
+    };
+    await this.minioClient.setBucketPolicy(bucket, JSON.stringify(policy));
   }
 
-  async uploadFile(buffer: Buffer, filename: string, mimetype?: string) {
-    const key = `${Date.now()}-${filename}`;
+  private sanitizeFilename(filename: string) {
+    return filename.replaceAll('/', '_').replaceAll('\\', '_');
+  }
+
+  async uploadFile(
+    entryId: string,
+    userId: string,
+    buffer: Buffer,
+    filename: string,
+    mimetype?: string,
+  ) {
+    const safeFilename = this.sanitizeFilename(filename);
+    const key = `${userId}/${entryId}/${Date.now()}-${safeFilename}`;
     await this.minioClient.putObject(
       process.env.MINIO_BUCKET || 'uploads',
       key,
@@ -42,5 +66,28 @@ export class StorageService implements OnModuleInit {
       process.env.MINIO_BUCKET || 'uploads',
       key,
     );
+  }
+
+  async listAssets(prefix = '') {
+    const bucket = process.env.MINIO_BUCKET || 'uploads';
+    const objects: Array<{ key: string; size?: number; lastModified?: Date }> =
+      [];
+
+    const stream = this.minioClient.listObjectsV2(bucket, prefix, true);
+    await new Promise<void>((resolve, reject) => {
+      stream.on('data', (obj) => {
+        if (obj?.name) {
+          objects.push({
+            key: obj.name,
+            size: obj.size,
+            lastModified: obj.lastModified,
+          });
+        }
+      });
+      stream.on('error', reject);
+      stream.on('end', () => resolve());
+    });
+
+    return objects;
   }
 }

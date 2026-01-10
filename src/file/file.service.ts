@@ -8,15 +8,28 @@ export class FileService {
     private readonly storage: StorageService,
     private readonly kafka: KafkaService,
   ) {}
-  
- 
-  
-  async uploadFile(buffer: Buffer, filename: string, mimetype?: string) {
-    const { key } = await this.storage.uploadFile(buffer, filename, mimetype);
+
+  async uploadFile(
+    entryId: string,
+    userId: string,
+    buffer: Buffer,
+    filename: string,
+    mimetype?: string,
+  ) {
+    const { key } = await this.storage.uploadFile(
+      entryId,
+      userId,
+      buffer,
+      filename,
+      mimetype,
+    );
+    const assetId = key;
     const endpoint = process.env.MINIO_PUBLIC_URL;
     const bucket = process.env.MINIO_BUCKET || 'uploads';
     const url = `${endpoint}/${bucket}/${key}`;
     const event: FileUploadedEvent = {
+      entryId,
+      assetId,
       key,
       originalname: filename,
       uploadedAt: new Date().toISOString(),
@@ -24,7 +37,7 @@ export class FileService {
 
     await this.kafka.publishFileUploaded(event);
 
-    return { key, url };
+    return { entryId, assetId, key, url };
   }
 
   async getFile(key: string) {

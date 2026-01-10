@@ -3,6 +3,7 @@ services:
     build:
       context: .
       target: development
+    user: '1000:1000'
     ports:
       - '3000:3000'
     env_file:
@@ -16,7 +17,7 @@ services:
       - kafka
     volumes:
       - .:/usr/src/app:Z
-      - /usr/src/app/node_modules
+      - app_node_modules:/usr/src/app/node_modules
     restart: unless-stopped
 
   minio:
@@ -65,3 +66,4 @@ services:
 volumes:
   minio_data:
   kafka_data:
+  app_node_modules:
