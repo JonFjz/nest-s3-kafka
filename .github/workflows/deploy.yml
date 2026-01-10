@@ -38,6 +38,7 @@ jobs:
       - name: Build Docker image
         run: |
           docker build \
+            --target development \
             -t nest-s3:latest \
             -f Dockerfile \
             .
