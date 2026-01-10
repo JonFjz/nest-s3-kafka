@@ -1,23 +1,23 @@
-# Use official Node.js LTS image
-FROM node:20-alpine
-
-# Set working directory inside container
+FROM node:20-alpine AS development
 WORKDIR /usr/src/app
-
-# Copy package.json and package-lock.json (or yarn.lock)
 COPY package*.json ./
-
-# Install dependencies
-RUN npm install
-
-# Copy the rest of the app code
+RUN npm ci
 COPY . .
+EXPOSE 3000
+CMD ["npm", "run", "start:dev"]
 
-# Build the TypeScript code
+FROM node:20-alpine AS build
+WORKDIR /usr/src/app
+COPY package*.json ./
+RUN npm ci
+COPY . .
 RUN npm run build
 
-# Expose port 3000 for NestJS
+FROM node:20-alpine AS production
+WORKDIR /usr/src/app
+ENV NODE_ENV=production
+COPY package*.json ./
+RUN npm ci --omit=dev
+COPY --from=build /usr/src/app/dist ./dist
 EXPOSE 3000
-
-# Start the app in development mode (hot reload)
-CMD ["npm", "run", "start:dev"]
+CMD ["node", "dist/main"]

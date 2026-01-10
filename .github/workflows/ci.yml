@@ -1,0 +1,46 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Create .env from example
+        run: cp dotenv .env
+
+      - name: Start Infrastructure
+        run: docker-compose up -d minio kafka zookeeper
+
+      - name: Wait for services
+        run: sleep 10
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Build
+        run: npm run build
+
+      - name: Unit Tests
+        run: npm run test
+
+      - name: E2E Tests
+        env:
+          MINIO_ENDPOINT: localhost
+        run: npm run test:e2e
