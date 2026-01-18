@@ -5,13 +5,23 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  const allowedOrigins = ['http://localhost:3000'];
+  const allowedOrigins = [
+    'http://localhost:3000',
+    'https://nest.jonfjz.dev',
+  ];
   app.enableCors({
     origin: (origin, callback) => {
       if (!origin) return callback(null, true);
-      return allowedOrigins.includes(origin)
-        ? callback(null, true)
-        : callback(new Error('Not allowed by CORS'));
+      const isAllowed =
+        allowedOrigins.includes(origin) ||
+        origin.endsWith('.jonfjz.dev') ||
+        origin.startsWith('http://localhost:');
+
+      if (isAllowed) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
     },
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
     credentials: true,
@@ -26,6 +36,6 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
 
-  await app.listen(process.env.PORT ?? 3000);
+  await app.listen(process.env.PORT ?? 3000, '0.0.0.0');
 }
 void bootstrap();

@@ -18,21 +18,41 @@ export class KafkaService implements OnModuleInit, OnModuleDestroy {
   private producer: Producer;
 
   onModuleInit = async () => {
-    this.kafka = new Kafka({
-      brokers: [process.env.KAFKA_BROKER || 'localhost:9092'],
-    });
-    this.producer = this.kafka.producer();
-    await this.producer.connect();
+    try {
+      this.kafka = new Kafka({
+        brokers: [process.env.KAFKA_BROKER || 'localhost:9092'],
+        connectionTimeout: 5000,
+        retry: {
+          initialRetryTime: 300,
+          retries: 5,
+        },
+      });
+      this.producer = this.kafka.producer();
+      await this.producer.connect();
+      console.log('Kafka Producer connected');
+    } catch (error) {
+      console.error('Kafka Connection Error:', error.message);
+    }
   };
 
   onModuleDestroy = async () => {
-    await this.producer.disconnect();
+    if (this.producer) {
+      await this.producer.disconnect();
+    }
   };
 
   async publishFileUploaded(event: FileUploadedEvent) {
-    await this.producer.send({
-      topic: process.env.KAFKA_TOPIC || 'files.uploaded',
-      messages: [{ value: JSON.stringify(event) }],
-    });
+    if (!this.producer) {
+      console.error('Kafka producer not available, skipping message');
+      return;
+    }
+    try {
+      await this.producer.send({
+        topic: process.env.KAFKA_TOPIC || 'files.uploaded',
+        messages: [{ value: JSON.stringify(event) }],
+      });
+    } catch (error) {
+      console.error('Error sending Kafka message:', error.message);
+    }
   }
 }

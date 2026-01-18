@@ -8,34 +8,39 @@ export class StorageService implements OnModuleInit {
   private minioClient: Client;
 
   async onModuleInit() {
-    this.minioClient = new Client({
-      endPoint: process.env.MINIO_ENDPOINT || 'localhost',
-      port: parseInt(process.env.MINIO_PORT || '9000', 10),
-      useSSL: false,
-      accessKey: process.env.MINIO_ACCESS_KEY,
-      secretKey: process.env.MINIO_SECRET_KEY,
-    });
+    try {
+      this.minioClient = new Client({
+        endPoint: process.env.MINIO_ENDPOINT || 'localhost',
+        port: parseInt(process.env.MINIO_PORT || '9000', 10),
+        useSSL: false,
+        accessKey: process.env.MINIO_ACCESS_KEY,
+        secretKey: process.env.MINIO_SECRET_KEY,
+      });
 
-    const bucket = process.env.MINIO_BUCKET || 'uploads';
-    const exists = await this.minioClient
-      .bucketExists(bucket)
-      .catch(() => false);
-    if (!exists) {
-      await this.minioClient.makeBucket(bucket, 'us-east-1');
+      const bucket = process.env.MINIO_BUCKET || 'uploads';
+      const exists = await this.minioClient
+        .bucketExists(bucket)
+        .catch(() => false);
+      if (!exists) {
+        await this.minioClient.makeBucket(bucket, 'us-east-1');
+      }
+
+      const policy = {
+        Version: '2012-10-17',
+        Statement: [
+          {
+            Effect: 'Allow',
+            Principal: { AWS: ['*'] },
+            Action: ['s3:GetObject'],
+            Resource: [`arn:aws:s3:::${bucket}/*`],
+          },
+        ],
+      };
+      await this.minioClient.setBucketPolicy(bucket, JSON.stringify(policy));
+      console.log('MinIO connection initialized');
+    } catch (error) {
+      console.error('MinIO Initialization Error:', error.message);
     }
-
-    const policy = {
-      Version: '2012-10-17',
-      Statement: [
-        {
-          Effect: 'Allow',
-          Principal: { AWS: ['*'] },
-          Action: ['s3:GetObject'],
-          Resource: [`arn:aws:s3:::${bucket}/*`],
-        },
-      ],
-    };
-    await this.minioClient.setBucketPolicy(bucket, JSON.stringify(policy));
   }
 
   private sanitizeFilename(filename: string) {
