@@ -101,10 +101,8 @@ export class FileController {
     try {
       const stream = await this.fileService.getFile(key);
 
-      // Optional: set content type to application/octet-stream
       res.setHeader('Content-Type', 'application/octet-stream');
 
-      // Handle streaming errors
       stream.on('error', (err) => {
         console.error('Stream error:', err);
         res.status(500).end('Error reading file');

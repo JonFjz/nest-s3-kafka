@@ -8,6 +8,7 @@ export type AssetListItem = {
   key: string;
   size?: number;
   lastModified?: string;
+  url: string;
 };
 
 @Injectable()
@@ -53,6 +54,14 @@ export class AssetsService {
       const filename =
         dashIdx === -1 ? remainder : remainder.slice(dashIdx + 1);
 
+      const endpoint = process.env.MINIO_PUBLIC_URL || 'http://localhost:9000';
+      const bucket = process.env.MINIO_BUCKET || 'uploads';
+      const encodedKey = obj.key
+        .split('/')
+        .map((part) => encodeURIComponent(part))
+        .join('/');
+      const url = `${endpoint}/${bucket}/${encodedKey}`;
+
       return {
         assetId: obj.key,
         entryId,
@@ -62,6 +71,7 @@ export class AssetsService {
         lastModified: obj.lastModified
           ? obj.lastModified.toISOString()
           : undefined,
+        url,
       };
     });
 
