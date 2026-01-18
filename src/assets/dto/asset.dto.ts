@@ -18,6 +18,9 @@ export class AssetListItemDto {
 
   @ApiProperty({ example: '2023-10-27T10:00:00.000Z', required: false })
   lastModified?: string;
+
+  @ApiProperty({ example: 'http://localhost:9000/uploads/user-id/entry-id/timestamp-filename.ext' })
+  url: string;
 }
 
 export class AssetsResponseDto {

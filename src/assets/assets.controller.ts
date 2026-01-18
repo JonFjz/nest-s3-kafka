@@ -46,8 +46,6 @@ export class AssetsController {
 
     const userId = req.user?.sub;
     if (!userId) {
-      // Should handle case where sub is missing, though Guard usually guarantees user presence.
-      // But sub might be optional in JwtPayload definition?
       throw new BadRequestException('User ID not found in token');
     }
 
