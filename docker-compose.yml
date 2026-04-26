@@ -12,6 +12,9 @@ services:
       - MINIO_ENDPOINT=minio
       - MINIO_PORT=9000
       - KAFKA_BROKER=kafka:9092
+      - CMSORG_BASE_URL=http://host.docker.internal:5059
+    extra_hosts:
+      - 'host.docker.internal:host-gateway'
     depends_on:
       - minio
       - kafka

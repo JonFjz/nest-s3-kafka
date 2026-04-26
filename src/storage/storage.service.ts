@@ -50,15 +50,14 @@ export class StorageService implements OnModuleInit {
       .replaceAll(' ', '_');
   }
 
-  async uploadFile(
-    entryId: string,
+  async uploadUserFile(
     userId: string,
     buffer: Buffer,
     filename: string,
     mimetype?: string,
   ) {
     const safeFilename = this.sanitizeFilename(filename);
-    const key = `${userId}/${entryId}/${Date.now()}-${safeFilename}`;
+    const key = `${userId}/${Date.now()}-${safeFilename}`;
     await this.minioClient.putObject(
       process.env.MINIO_BUCKET || 'uploads',
       key,
@@ -74,6 +73,43 @@ export class StorageService implements OnModuleInit {
       process.env.MINIO_BUCKET || 'uploads',
       key,
     );
+  }
+
+  async uploadOrgFile(
+    orgId: string,
+    entryId: string,
+    buffer: Buffer,
+    filename: string,
+    mimetype?: string,
+  ) {
+    const safeFilename = this.sanitizeFilename(filename);
+    const key = `orgs/${orgId}/${entryId}/${Date.now()}-${safeFilename}`;
+    await this.minioClient.putObject(
+      process.env.MINIO_BUCKET || 'uploads',
+      key,
+      buffer,
+      buffer.length,
+      { 'Content-Type': mimetype || 'application/octet-stream' },
+    );
+    return { key };
+  }
+
+  async uploadProfileAsset(
+    userId: string,
+    buffer: Buffer,
+    filename: string,
+    mimetype?: string,
+  ) {
+    const safeFilename = this.sanitizeFilename(filename);
+    const key = `profiles/${userId}/${Date.now()}-${safeFilename}`;
+    await this.minioClient.putObject(
+      process.env.MINIO_BUCKET || 'uploads',
+      key,
+      buffer,
+      buffer.length,
+      { 'Content-Type': mimetype || 'application/octet-stream' },
+    );
+    return { key };
   }
 
   async listAssets(prefix = '') {

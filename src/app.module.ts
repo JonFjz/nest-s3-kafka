@@ -1,16 +1,13 @@
 import { Module } from '@nestjs/common';
 import { StorageModule } from './storage/storage.module';
 import { KafkaModule } from './kafka/kafka.module';
-import { FileService } from './file/file.service';
-import { FileController } from './file/file.controller';
-import { UploadsController } from './file/uploads.controller';
 import { AuthModule } from './auth/auth.module';
-import { AssetsController } from './assets/assets.controller';
-import { AssetsService } from './assets/assets.service';
+import { UploadsController } from './file/uploads.controller';
+import { OrganisationsController } from './organisations/organisations.controller';
+import { UsersController } from './users/users.controller';
 
 @Module({
   imports: [AuthModule, StorageModule, KafkaModule],
-  controllers: [FileController, UploadsController, AssetsController],
-  providers: [FileService, AssetsService],
+  controllers: [UploadsController, OrganisationsController, UsersController],
 })
 export class AppModule {}
