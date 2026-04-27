@@ -1,6 +1,9 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { Organisation, OrganisationSchema } from './schemas/organisation.schema';
+import {
+  Organisation,
+  OrganisationSchema,
+} from './schemas/organisation.schema';
 import { OrganisationsService } from './organisations.service';
 import { OrganisationsController } from './organisations.controller';
 import { StorageModule } from '../storage/storage.module';

@@ -10,7 +10,10 @@ export class UploadsController {
 
   @Get('*')
   @ApiResponse({ status: 200, description: 'Public file stream from MinIO' })
-  async getPublicFile(@Req() req: express.Request, @Res() res: express.Response) {
+  async getPublicFile(
+    @Req() req: express.Request,
+    @Res() res: express.Response,
+  ) {
     const key = req.url.replace('/uploads/', '');
     try {
       const stream = await this.storage.getFileStream(key);
@@ -28,7 +31,10 @@ export class UploadsController {
         webm: 'video/webm',
       };
 
-      res.setHeader('Content-Type', contentTypeMap[ext] || 'application/octet-stream');
+      res.setHeader(
+        'Content-Type',
+        contentTypeMap[ext] || 'application/octet-stream',
+      );
 
       stream.on('error', () => {
         if (!res.headersSent) res.status(404).end('File not found');

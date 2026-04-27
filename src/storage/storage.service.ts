@@ -130,7 +130,7 @@ export class StorageService implements OnModuleInit {
       size: stat.size,
       lastModified: stat.lastModified,
       etag: stat.etag,
-      contentType: (stat.metaData as Record<string, string>)?.['content-type'],
+      contentType: stat.metaData?.['content-type'],
       tags,
     };
   }

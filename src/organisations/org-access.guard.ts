@@ -39,9 +39,7 @@ export class OrgAccessGuard implements CanActivate {
 
     if (res.status === 401) throw new UnauthorizedException();
     if (res.status === 403)
-      throw new ForbiddenException(
-        'You are not a member of this organisation',
-      );
+      throw new ForbiddenException('You are not a member of this organisation');
     if (!res.ok)
       throw new ForbiddenException('Could not verify organisation membership');
 

@@ -5,7 +5,10 @@ import { Model } from 'mongoose';
 import type { Cache } from 'cache-manager';
 import { StorageService } from '../storage/storage.service';
 import { KafkaService } from '../kafka/kafka.service';
-import { Organisation, OrganisationDocument } from '../organisations/schemas/organisation.schema';
+import {
+  Organisation,
+  OrganisationDocument,
+} from '../organisations/schemas/organisation.schema';
 import { OrganisationsService } from '../organisations/organisations.service';
 
 const CACHE_TTL = 5 * 60 * 1000;
@@ -91,7 +94,10 @@ export class AssetsService {
     const cached = await this.cache.get(cacheKey);
     if (cached) return cached;
 
-    const org = await this.orgModel.findOne({ 'assets.key': key }).lean().exec();
+    const org = await this.orgModel
+      .findOne({ 'assets.key': key })
+      .lean()
+      .exec();
     if (!org) throw new NotFoundException('Asset not found');
 
     const asset = org.assets.find((a) => a.key === key);
@@ -132,9 +138,11 @@ export class AssetsService {
       { $pull: { assets: { key } } },
     );
 
-    await this.storage.deleteAsset(key).catch((err) =>
-      console.error(`MinIO delete failed for key ${key}:`, err?.message),
-    );
+    await this.storage
+      .deleteAsset(key)
+      .catch((err) =>
+        console.error(`MinIO delete failed for key ${key}:`, err?.message),
+      );
 
     await Promise.all([
       this.cache.del(`assets:info:${key}`),
@@ -153,7 +161,7 @@ export class AssetsService {
 
   private serialize(doc: Record<string, any>) {
     const { _id, __v, ...rest } = doc;
-    return { id: (_id as any).toString(), ...rest };
+    return { id: _id.toString(), ...rest };
   }
 
   private buildUrl(key: string): string {

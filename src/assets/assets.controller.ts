@@ -61,7 +61,11 @@ export class AssetsController {
 
   @Get()
   @AssetAccess('read')
-  @ApiQuery({ name: 'entryId', required: false, description: 'Filter by entry ID' })
+  @ApiQuery({
+    name: 'entryId',
+    required: false,
+    description: 'Filter by entry ID',
+  })
   @ApiResponse({ status: 200 })
   async list(
     @Param('orgId') orgId: string,
@@ -72,7 +76,11 @@ export class AssetsController {
 
   @Get('info')
   @AssetAccess('read')
-  @ApiQuery({ name: 'key', required: true, description: 'Full asset key (e.g. orgs/orgId/entryId/file.jpg)' })
+  @ApiQuery({
+    name: 'key',
+    required: true,
+    description: 'Full asset key (e.g. orgs/orgId/entryId/file.jpg)',
+  })
   @ApiResponse({ status: 200 })
   async getInfo(@Query('key') key: string) {
     if (!key) throw new BadRequestException('key query param is required');

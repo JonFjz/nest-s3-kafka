@@ -1,7 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { Organisation, OrganisationDocument } from './schemas/organisation.schema';
+import {
+  Organisation,
+  OrganisationDocument,
+} from './schemas/organisation.schema';
 
 @Injectable()
 export class OrganisationsService {

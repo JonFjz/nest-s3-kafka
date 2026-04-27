@@ -36,7 +36,8 @@ export class AssetAccessGuard implements CanActivate {
 
     const orgId = req.params.orgId;
     const baseUrl =
-      process.env.CMSORG_BASE_URL?.replace(/\/$/, '') ?? 'http://localhost:5059';
+      process.env.CMSORG_BASE_URL?.replace(/\/$/, '') ??
+      'http://localhost:5059';
 
     let res: Response;
     try {
