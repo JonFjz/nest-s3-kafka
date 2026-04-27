@@ -84,7 +84,7 @@ export class AssetsService {
       await this.cache.set(cacheKey, result, CACHE_TTL);
       console.log('Cache SET ok:', cacheKey);
     } catch (err) {
-      console.error('Cache SET failed:', err?.message);
+      console.error('Cache SET failed:', (err as Error | undefined)?.message);
     }
     return result;
   }
@@ -141,7 +141,10 @@ export class AssetsService {
     await this.storage
       .deleteAsset(key)
       .catch((err) =>
-        console.error(`MinIO delete failed for key ${key}:`, err?.message),
+        console.error(
+          `MinIO delete failed for key ${key}:`,
+          (err as Error | undefined)?.message,
+        ),
       );
 
     await Promise.all([
@@ -159,9 +162,9 @@ export class AssetsService {
     ]);
   }
 
-  private serialize(doc: Record<string, any>) {
-    const { _id, __v, ...rest } = doc;
-    return { id: _id.toString(), ...rest };
+  private serialize(doc: Record<string, unknown>) {
+    const { _id, __v: _v, ...rest } = doc;
+    return { id: String(_id), ...rest };
   }
 
   private buildUrl(key: string): string {

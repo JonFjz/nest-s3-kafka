@@ -21,7 +21,7 @@ export class OrgAccessGuard implements CanActivate {
     }
     const token = authHeader.slice(7);
 
-    const orgId = req.params.orgId;
+    const orgId = req.params.orgId as string;
     const baseUrl =
       process.env.CMSORG_BASE_URL?.replace(/\/$/, '') ??
       'http://localhost:5059';

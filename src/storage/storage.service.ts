@@ -39,7 +39,7 @@ export class StorageService implements OnModuleInit {
       await this.minioClient.setBucketPolicy(bucket, JSON.stringify(policy));
       console.log('MinIO connection initialized');
     } catch (error) {
-      console.error('MinIO Initialization Error:', error.message);
+      console.error('MinIO Initialization Error:', (error as Error).message);
     }
   }
 
@@ -130,7 +130,7 @@ export class StorageService implements OnModuleInit {
       size: stat.size,
       lastModified: stat.lastModified,
       etag: stat.etag,
-      contentType: stat.metaData?.['content-type'],
+      contentType: stat.metaData?.['content-type'] as string | undefined,
       tags,
     };
   }

@@ -7,7 +7,10 @@ async function bootstrap() {
 
   const allowedOrigins = ['http://localhost:3000', 'https://nest.jonfjz.dev'];
   app.enableCors({
-    origin: (origin, callback) => {
+    origin: (
+      origin: string | undefined,
+      callback: (err: Error | null, allow?: boolean) => void,
+    ) => {
       if (!origin) return callback(null, true);
       const isAllowed =
         allowedOrigins.includes(origin) ||

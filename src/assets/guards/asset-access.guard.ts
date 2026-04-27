@@ -34,7 +34,7 @@ export class AssetAccessGuard implements CanActivate {
     if (!authHeader?.startsWith('Bearer ')) throw new UnauthorizedException();
     const token = authHeader.slice(7);
 
-    const orgId = req.params.orgId;
+    const orgId = req.params.orgId as string;
     const baseUrl =
       process.env.CMSORG_BASE_URL?.replace(/\/$/, '') ??
       'http://localhost:5059';
@@ -66,7 +66,7 @@ export class AssetAccessGuard implements CanActivate {
       );
     }
 
-    (req as any).orgRole = role;
+    (req as Request & { orgRole: string }).orgRole = role;
     return true;
   }
 }
