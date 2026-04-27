@@ -10,6 +10,13 @@ MINIO_PUBLIC_URL=http://localhost:9000
 KAFKA_BROKER=kafka:9092
 KAFKA_TOPIC=files.uploaded
 
+# MongoDB
+MONGODB_URI=mongodb://mongo:27017/cms
+
+# Redis
+REDIS_HOST=redis
+REDIS_PORT=6379
+
 # NestJS server port (optional)
 PORT=3000
 

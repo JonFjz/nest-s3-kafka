@@ -112,6 +112,37 @@ export class StorageService implements OnModuleInit {
     return { key };
   }
 
+  async deleteAsset(key: string): Promise<void> {
+    await this.minioClient.removeObject(
+      process.env.MINIO_BUCKET || 'uploads',
+      key,
+    );
+  }
+
+  async getAssetInfo(key: string) {
+    const bucket = process.env.MINIO_BUCKET || 'uploads';
+    const [stat, tags] = await Promise.all([
+      this.minioClient.statObject(bucket, key),
+      this.minioClient.getObjectTagging(bucket, key).catch(() => ({})),
+    ]);
+    return {
+      key,
+      size: stat.size,
+      lastModified: stat.lastModified,
+      etag: stat.etag,
+      contentType: (stat.metaData as Record<string, string>)?.['content-type'],
+      tags,
+    };
+  }
+
+  async setAssetTags(key: string, tags: Record<string, string>): Promise<void> {
+    await this.minioClient.setObjectTagging(
+      process.env.MINIO_BUCKET || 'uploads',
+      key,
+      tags,
+    );
+  }
+
   async listAssets(prefix = '') {
     const bucket = process.env.MINIO_BUCKET || 'uploads';
     const objects: Array<{ key: string; size?: number; lastModified?: Date }> =
